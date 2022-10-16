@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { registration, login } = require('../controllers/userController')
+const { registration, login, verifyOtp } = require('../controllers/userController')
 
 
 router.post('/create', registration)
 router.post('/login', login)
+router.put('/verify', verifyOtp)
 
 
 

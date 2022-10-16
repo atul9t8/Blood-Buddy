@@ -5,13 +5,13 @@ const Schema = mongoose.Schema;
 const otpSchema = new Schema({
     mobile : {
         type : String,
-        require: true
+        required: true
     },
     otp : {
         type: String,
-        require: true
+        required: true
     },
-    createdAt:{ type: Date, default: Date.now, index:{expires: 120}}
+    // createdAt:{ type: Date, default: Date.now, index:{expires: 120}}
 })
 
 let otp = mongoose.model("otp", otpSchema);

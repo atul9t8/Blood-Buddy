@@ -1,22 +1,41 @@
-// const mongoose = require("mongoose");
 const express = require("express");
+const axios = require('axios')
 const User = require("../models/userModel");
 const Otp = require("../models/otpModel");
 const bcrypt = require("bcrypt");
+
+
+
 
 const registration = async (req, res)=>{
     let mobile = req.body.mobile;
     let exist = await User.find({mobile:mobile})
     if (exist.length > 0) {
-        res.send("An account with this mobile aready exists")
+        if(exist[0].verified == 0){
+            let randomNum = Math.floor(Math.random() * 1000000);
+            let otpObj = new Otp({
+                mobile : mobile,
+                otp : randomNum
+            })
+            try {
+                const greenwebsms = new URLSearchParams();
+                greenwebsms.append('token', '85760207341665950854ea1ebc6b695ee4721ac235182398fc5e');
+                greenwebsms.append('to', mobile);
+                greenwebsms.append('message', `Your BloodBuddy OTP is ${randomNum}. Expires in 2 minute. `);
+                axios.post('http://api.greenweb.com.bd/api.php', greenwebsms).then(response => {
+                    res.send("OTP send to your mobile number.");
+                });
+                otpObj.save()
+            } catch (error) {
+                res.send(error)
+            }
+        } else{
+            res.send("An account with this mobile aready exists")
+        }
     }
     else{
-        let randomNum = Math.floor(Math.random() * 1000000);
-        console.log(randomNum);
-
         let password = req.body.password;
         let cPassword = req.body.cPassword;
-
         if(password === cPassword){
             bcrypt.hash(password, 10, (err, hash)=>{
                 password = hash;
@@ -24,51 +43,100 @@ const registration = async (req, res)=>{
                     mobile : mobile,
                     password : password
                 })
-                    try {
-                        user.save()
-                        const token = user.generateJWT()
-                        bcrypt.hash(randomNum, 10, (err, hash)=>{
-                            let otp = hash;
-                            console.log(hash)
-                            let otpObj = new Otp({
-                                mobile : mobile,
-                                otp : "89898"
-                            })
-                            otpObj.save()
-                            console.log('otp saved')
-                        })
-                        res.send(token)
-                    } catch (error) {
-                        res.send(error)
-                    }
-                
+                let randomNum = Math.floor(Math.random() * 1000000);
+                let otpObj = new Otp({
+                    mobile : mobile,
+                    otp : randomNum
+                })
+                try {
+                    const greenwebsms = new URLSearchParams();
+                    greenwebsms.append('token', '85760207341665950854ea1ebc6b695ee4721ac235182398fc5e');
+                    greenwebsms.append('to', mobile);
+                    greenwebsms.append('message', `Your BloodBuddy OTP is ${randomNum}. Expires in 2 minute. `);
+                    axios.post('http://api.greenweb.com.bd/api.php', greenwebsms).then(response => {
+                        console.log(response.data);
+                    });
+                    otpObj.save()
+
+                    user.save()
+                    const token = user.generateJWT()
+                    console.log('otp saved')
+                    res.send(token)
+                } catch (error) {
+                    res.send(error)
+                }               
             });
         }else{
             res.send("Password and Confirm Password doesn't match!")
         }
     }
 }
-const checkOtp = async(req, res)=>{
 
+
+
+const verifyOtp = async(req, res)=>{
+    let mobile = req.body.mobile;
+    let otp = req.body.otp;
+    let exist = await Otp.find({mobile:mobile})
+    if(exist.length > 0){
+        if(exist[exist.length - 1].otp == otp){
+        let user = await User.findOne({mobile:mobile})
+        user.verified = "1"
+        try{
+            user.save()
+            res.send("Mobile number verified")
+        }catch(err){
+            res.send(err)
+        }
+        }else{
+            res.send("Invalid OTP!")
+        }
+    }else{
+        res.send("Your OTP is expired. Please try again!")
+    }
 }
 
 
-const login = async (req,res)=>{
-    email = req.body.mobile;
-    password = req.body.password;
 
+const login = async (req,res)=>{
+    mobile = req.body.mobile;
+    password = req.body.password;
     const user = await User.findOne({mobile:mobile})
     if(user !== null){
-        const checkPass = await bcrypt.compare(password, user.password)
-        if(checkPass == true){
-            const token = user.generateJWT()
-            console.log(token)
+        if(user.verified == 0){
+            let randomNum = Math.floor(Math.random() * 1000000);
+            let otpObj = new Otp({
+                mobile : mobile,
+                otp : randomNum
+            })
+            try {
+                const greenwebsms = new URLSearchParams();
+                greenwebsms.append('token', '85760207341665950854ea1ebc6b695ee4721ac235182398fc5e');
+                greenwebsms.append('to', mobile);
+                greenwebsms.append('message', `Your BloodBuddy OTP is ${randomNum}. Expires in 2 minute. `);
+                axios.post('http://api.greenweb.com.bd/api.php', greenwebsms).then(response => {
+                console.log("OTP send to your mobile number.");
+                });
+                otpObj.save()
+                res.send("OTP send to your mobile number. Please verify to login.")
+            } catch (error) {
+                res.send(error)
+            }
         }else{
-            res.send("Invalid email or password")
+            const checkPass = await bcrypt.compare(password, user.password)
+            if(checkPass == true){
+                const token = user.generateJWT()
+                res.send(token)
+            }else{
+                res.send("Invalid email or password")
+            }
         }
     }else{
         res.send("Invalid email or password")
     }
 }
 
-module.exports = { registration, login }
+
+
+
+module.exports = { registration, login, verifyOtp }

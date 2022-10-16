@@ -14,15 +14,21 @@ const registrationSchema = new Schema({
     cPassword:{
         type: String
     },
+    role:{
+        type: String,
+        required: true,
+        default: "user"
+
+    },
     verified:{
         type: String,
-        require: true,
+        required: true,
         default: "0"
     }
 }, {timestamps:true})
 
 registrationSchema.methods.generateJWT = function(){
-    const token = jwt.sign({_id: this._id, mobile: this.mobile}, process.env.KEY)
+    const token = jwt.sign({_id: this._id, mobile: this.mobile, role: this.role}, process.env.KEY)
     return token;
 }
 
