@@ -6,6 +6,10 @@ const bcrypt = require("bcrypt");
 
 
 
+const greet = async(req, res)=>{
+    res.send("Welcome")
+}
+
 
 const registration = async (req, res)=>{
     let mobile = req.body.mobile;
@@ -139,4 +143,4 @@ const login = async (req,res)=>{
 
 
 
-module.exports = { registration, login, verifyOtp }
+module.exports = { greet, registration, login, verifyOtp }
