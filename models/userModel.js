@@ -3,6 +3,10 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const registrationSchema = new Schema({
+    fullName:{
+        type: String,
+        required: true
+    },
     mobile:{
         type:String,
         required:true
@@ -12,6 +16,24 @@ const registrationSchema = new Schema({
         required:true
     },
     cPassword:{
+        type: String
+    },
+    bloodGroup:{
+        type: String,
+        required: true,
+        default:"Not Set"
+    },
+    location:{
+        type: String,
+        required: true,
+        default:"Not Set"
+    },
+    weight:{
+        type: String,
+        required: true,
+        default:"Not Set"
+    },
+    referenceCode:{
         type: String
     },
     role:{
