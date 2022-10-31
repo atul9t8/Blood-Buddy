@@ -5,7 +5,9 @@ const app = express();
 app.use(express.json())
 const userRoute = require("./routers/userRouter")
 
-app.use(cors())
+app.use(cors({
+    origin: "*"
+}))
 require('dotenv').config()
 mongoose.connect(process.env.DB)
 

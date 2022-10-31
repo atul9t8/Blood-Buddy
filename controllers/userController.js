@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 
 
 const greet = async(req, res)=>{
-    res.send("Welcome")
+    res.send("Welcome Home")
 }
 
 
