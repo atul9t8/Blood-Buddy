@@ -49,35 +49,73 @@ const registration = async (req, res)=>{
         if(password === cPassword){
             bcrypt.hash(password, 10, (err, hash)=>{
                 password = hash;
-                let user = new User({
-                    fullName: fullName,
-                    mobile : mobile,
-                    password : password,
-                    referenceCode: referenceCode
-                })
-                // let randomNum = Math.floor(Math.random() * 1000000);
-
-                // let otpObj = new Otp({
-                //     mobile : mobile,
-                //     otp : randomNum
-                // })
-                try {
-                    // const greenwebsms = new URLSearchParams();
-                    // greenwebsms.append('token', '85760207341665950854ea1ebc6b695ee4721ac235182398fc5e');
-                    // greenwebsms.append('to', mobile);
-                    // greenwebsms.append('message', `Your BloodBuddy OTP is ${randomNum}. Expires in 2 minute. `);
-                    // axios.post('http://api.greenweb.com.bd/api.php', greenwebsms).then(response => {
-                    //     console.log(response.data);
-                    // });
-                    // otpObj.save()
-
-                    user.save()
-                    const token = user.generateJWT()
-                    // console.log('otp saved')
-                    res.send(token)
-                } catch (error) {
-                    res.send(error)
-                }               
+                if(req.body.role){
+                    if(req.body.role == "doctor"){
+                        let user = new User({
+                            fullName: fullName,
+                            mobile : mobile,
+                            password : password,
+                            role: "doctor",
+                            specializedIn: req.body.specializedIn,
+                            doctorLocation : req.body.doctorLocation,
+                            doctorDistrict : req.body.doctorDistrict,
+                            referenceCode: referenceCode
+                        })
+                        // let randomNum = Math.floor(Math.random() * 1000000);
+        
+                        // let otpObj = new Otp({
+                        //     mobile : mobile,
+                        //     otp : randomNum
+                        // })
+                        try {
+                            // const greenwebsms = new URLSearchParams();
+                            // greenwebsms.append('token', '85760207341665950854ea1ebc6b695ee4721ac235182398fc5e');
+                            // greenwebsms.append('to', mobile);
+                            // greenwebsms.append('message', `Your BloodBuddy OTP is ${randomNum}. Expires in 2 minute. `);
+                            // axios.post('http://api.greenweb.com.bd/api.php', greenwebsms).then(response => {
+                            //     console.log(response.data);
+                            // });
+                            // otpObj.save()
+        
+                            user.save()
+                            const token = user.generateJWT()
+                            // console.log('otp saved')
+                            res.send(token)
+                        } catch (error) {
+                            res.send(error)
+                        }
+                    }
+                }else{
+                    let user = new User({
+                        fullName: fullName,
+                        mobile : mobile,
+                        password : password,
+                        referenceCode: referenceCode
+                    })
+                    // let randomNum = Math.floor(Math.random() * 1000000);
+    
+                    // let otpObj = new Otp({
+                    //     mobile : mobile,
+                    //     otp : randomNum
+                    // })
+                    try {
+                        // const greenwebsms = new URLSearchParams();
+                        // greenwebsms.append('token', '85760207341665950854ea1ebc6b695ee4721ac235182398fc5e');
+                        // greenwebsms.append('to', mobile);
+                        // greenwebsms.append('message', `Your BloodBuddy OTP is ${randomNum}. Expires in 2 minute. `);
+                        // axios.post('http://api.greenweb.com.bd/api.php', greenwebsms).then(response => {
+                        //     console.log(response.data);
+                        // });
+                        // otpObj.save()
+    
+                        user.save()
+                        const token = user.generateJWT()
+                        // console.log('otp saved')
+                        res.send(token)
+                    } catch (error) {
+                        res.send(error)
+                    }
+                }
             });
         }else{
             res.send("Password and Confirm Password doesn't match!")
@@ -155,6 +193,9 @@ const updateProfile = async (req, res)=>{
     let id = req.user._id
     const user = await User.findOne({_id:id})
     user.bloodGroup = req.body.bloodGroup
+    user.workPlace = req.body.workPlace
+    user.educationInstitution = req.body.educationInstitution
+    user.gender = req.body.gender
     user.location = req.body.location
     user.weight = req.body.weight
     

@@ -18,6 +18,21 @@ const registrationSchema = new Schema({
     cPassword:{
         type: String
     },
+    workPlace:{
+        type: String,
+        required: true,
+        default:"Not Set"
+    },
+    educationInstitution:{
+        type: String,
+        required: true,
+        default:"Not Set"
+    },
+    gender:{
+        type: String,
+        required: true,
+        default:"Not Set"
+    },
     bloodGroup:{
         type: String,
         required: true,
@@ -40,7 +55,18 @@ const registrationSchema = new Schema({
         type: String,
         required: true,
         default: "user"
-
+    },
+    specializedIn:{
+        type: String,
+        required: false,
+    },
+    doctorLocation:{
+        type: String,
+        required: false,
+    },
+    doctorDistrict:{
+        type: String,
+        required: false,
     },
     verified:{
         type: String,
