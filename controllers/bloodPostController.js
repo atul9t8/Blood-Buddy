@@ -2,11 +2,20 @@ const express = require("express")
 const Post = require("../models/bloodPostModel")
 
 const createPost = async(req, res)=>{
-    let details = req.body.details
+    // let bloodGroup = req.body.bloodGroup
+    // let location = req.body.location
+    // let hospital = req.body.hospital
+    // let indication = req.body.indication
     let user = req.user._id
 
     let post = new Post({
-        details : details,
+        bloodGroup : req.body.bloodGroup,
+        bag : req.body.bag,
+        date : req.body.date,
+        bloodGroup : req.body.bloodGroup,
+        location : req.body.location,
+        hospital : req.body.hospital,
+        indication : req.body.indication,
         user: user
     })
 
@@ -46,5 +55,7 @@ const deletePost = async(req, res)=>{
     }
     res.send(post)
 }
+
+
 
 module.exports = {createPost, findPost, deletePost}

@@ -3,7 +3,27 @@ const Schema = mongoose.Schema;
 
 
 const postSchema = new Schema({
-    details:{
+    bloodGroup:{
+        type: String,
+        required: true
+    },
+    bag:{
+        type: String,
+        required: true
+    },
+    date:{
+        type: String,
+        required: true
+    },
+    location:{
+        type: String,
+        required: true
+    },
+    hospital:{
+        type: String,
+        required: true
+    },
+    indication:{
         type: String,
         required: true
     },

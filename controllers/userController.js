@@ -1,8 +1,11 @@
 const express = require("express");
-const axios = require('axios')
+const axios = require('axios');
+const bcrypt = require("bcrypt");
+
 const User = require("../models/userModel");
 const Otp = require("../models/otpModel");
-const bcrypt = require("bcrypt");
+const Post = require("../models/bloodPostModel");
+
 
 
 
@@ -24,7 +27,7 @@ const registration = async (req, res)=>{
         //     })
         //     try {
         //         const greenwebsms = new URLSearchParams();
-        //         greenwebsms.append('token', '85760207341665950854ea1ebc6b695ee4721ac235182398fc5e');
+        //         greenwebsms.append('token', process.env.SMSTOKEN);
         //         greenwebsms.append('to', mobile);
         //         greenwebsms.append('message', `Your BloodBuddy OTP is ${randomNum}. Expires in 2 minute. `);
         //         axios.post('http://api.greenweb.com.bd/api.php', greenwebsms).then(response => {
@@ -69,7 +72,7 @@ const registration = async (req, res)=>{
                         // })
                         try {
                             // const greenwebsms = new URLSearchParams();
-                            // greenwebsms.append('token', '85760207341665950854ea1ebc6b695ee4721ac235182398fc5e');
+                            // greenwebsms.append('token', process.env.SMSTOKEN);
                             // greenwebsms.append('to', mobile);
                             // greenwebsms.append('message', `Your BloodBuddy OTP is ${randomNum}. Expires in 2 minute. `);
                             // axios.post('http://api.greenweb.com.bd/api.php', greenwebsms).then(response => {
@@ -100,7 +103,7 @@ const registration = async (req, res)=>{
                     // })
                     try {
                         // const greenwebsms = new URLSearchParams();
-                        // greenwebsms.append('token', '85760207341665950854ea1ebc6b695ee4721ac235182398fc5e');
+                        // greenwebsms.append('token', process.env.SMSTOKEN);
                         // greenwebsms.append('to', mobile);
                         // greenwebsms.append('message', `Your BloodBuddy OTP is ${randomNum}. Expires in 2 minute. `);
                         // axios.post('http://api.greenweb.com.bd/api.php', greenwebsms).then(response => {
@@ -162,7 +165,7 @@ const login = async (req,res)=>{
         //     })
         //     try {
         //         const greenwebsms = new URLSearchParams();
-        //         greenwebsms.append('token', '85760207341665950854ea1ebc6b695ee4721ac235182398fc5e');
+        //         greenwebsms.append('token', process.env.SMSTOKEN);
         //         greenwebsms.append('to', mobile);
         //         greenwebsms.append('message', `Your BloodBuddy OTP is ${randomNum}. Expires in 2 minute. `);
         //         axios.post('http://api.greenweb.com.bd/api.php', greenwebsms).then(response => {
@@ -208,7 +211,17 @@ const updateProfile = async (req, res)=>{
 }
 
 
+const doctorList = async(req, res)=>{
+    let doctors = await User.find({role: "doctor"});
+    res.send(doctors)
+}
 
 
+const searchDonor = async(req, res)=>{
+    let bloodGroup = req.body.bloodGroup
+    let searchedBloodDonorList = await User.find({bloodGroup: bloodGroup});
+    res.send(searchedBloodDonorList)
+}
 
-module.exports = { greet, registration, updateProfile, login, verifyOtp }
+
+module.exports = { greet, registration, updateProfile, login, verifyOtp, doctorList, searchDonor }
